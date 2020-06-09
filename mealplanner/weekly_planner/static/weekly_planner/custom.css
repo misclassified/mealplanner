@@ -1,0 +1,14 @@
+.navbar-nav .nav-link {
+    color: rgba(0,0,0,1) !important;
+}
+
+.navbar-nav .nav-link:hover {
+    color: rgba(0,0,0,.5) !important;
+}
+
+/* body {
+    font-family: 'Lato', sans-serif;
+} */
+
+
+.parent-div { text-align: center }
