@@ -53,8 +53,6 @@
 
 <button type="home_button" class="btn btn-dark"id="home_button" onclick="shopList()">Toggle Shopping List</button>
 
-<p>Double Click</p>
-
       <div id="shoppingList">
         <h2>Shopping List</h2>
         <br>
@@ -64,8 +62,8 @@
             <tr>
               <th scope="col">#</th>
               <th scope="col">Ingredient</th>
-              <th scope="col">Unit Measure</th>
               <th scope="col">Quantity</th>
+              <th scope="col">Unit Measure</th>
             </tr>
           </thead>
           <tbody>
@@ -89,16 +87,25 @@
 function shopList() {
   var x = document.getElementById("shoppingList");
 
-  if (x.style.display === "none") {
-    x.style.display = "block";
-  } else {
+  if (x.style.display === "block") {
     x.style.display = "none";
+  } else {
+    x.style.display = "block";
   }
 }
 </script>
 
+<br>
+<br>
+<button class="btn btn-primary hidden-print" onclick="myFunction()"><span class="glyphicon glyphicon-print" aria-hidden="true"></span> Print</button>
 
+<script> function myFunction() {
+    window.print();
+}
+</script>
 
+<br>
+<br>
 <a href="{% url 'home' %}"> Back to Home </a>
 
 
