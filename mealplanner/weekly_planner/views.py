@@ -19,7 +19,6 @@ def planner(request):
     recipes = Recipe.objects.all()
     rand_recipes = np.random.choice(recipes, size=length, replace=False)
 
-
     # Fetch Ingredients
     recipe_dict = {}
     ingredient_tuples = []
@@ -45,35 +44,49 @@ def planner(request):
         ingredient_tuples.extend(recipe_ingredients)
 
     # Create Shopping list
-    vars = ['ingredient', 'quantity', 'unit_measure']
-    ing_df = pd.DataFrame(ingredient_tuples, columns=vars)
-    ing_df['quantity'] = ing_df['quantity'].astype(float).fillna(0)
-
-    ing_df = ing_df.groupby(['ingredient', 'unit_measure'], as_index=False).sum()
-    ing_df = ing_df.sort_values(by = 'ingredient')
-    ing_df = ing_df.set_index('ingredient')
-
-    # Multiply quantities by number of people
-    ing_df['quantity'] = ing_df['quantity'] * people
-
-    # Round quantity to nearest 50'
-    ing_df['quantity'] = [(x+50 - (x % 50)) if x != 0 else x for x in ing_df['quantity']]
-
-    # Convert to str and replace 0 values with empty string
-    ing_df['quantity'] = ing_df['quantity'].astype('int').astype('str')
-    ing_df['quantity'] = ing_df['quantity'].replace('0', ' ')
-
-    # Replace nas in unite unit measure with empty string
-    ing_df['unit_measure'] = ing_df['unit_measure'].astype('str')
-    ing_df['unit_measure'] = ing_df['unit_measure'].replace('nan', ' ')
-
-
-
-    # Create ingredients list
-    shopping_list = ing_df.transpose().to_dict()
-
-    # Multiply quantities by number of people
-
-    # Create single ingredient list
+    sl = ShoppingList(ingredient_tuples, people)
+    shopping_list = sl.create_shopping_list()
 
     return render(request, 'weekly_planner/planner.html', {'recipes':recipe_dict, 'shopping_list': shopping_list})
+
+
+
+class ShoppingList(object):
+
+    def __init__(self, ingredient_tuples, people):
+
+        self.ingredient_tuples = ingredient_tuples
+        self.people = people
+
+    def create_shopping_list(self):
+
+        # Create Ingredients Pandas DataFrame
+        vars = ['ingredient', 'quantity', 'unit_measure']
+        ing_df = pd.DataFrame(self.ingredient_tuples, columns=vars)
+        ing_df['quantity'] = ing_df['quantity'].astype(float).fillna(0)
+
+        # Group by ingredient and unit_measure
+        ing_df = ing_df.groupby(['ingredient', 'unit_measure'], as_index=False).sum()
+        ing_df = ing_df.sort_values(by = 'ingredient')
+        ing_df = ing_df.set_index('ingredient')
+
+        # Multiply quantities by number of people
+        ing_df['quantity'] = ing_df['quantity'] * self.people
+
+        # Round to nearest 50'
+        ing_df['quantity'] = [(x[0]+50 - (x[0] % 50)) if x[0] != 0 and x[1] != 'nan'
+            else x[0] for x in zip(ing_df['quantity'], ing_df['unit_measure'])]
+        print(ing_df[ing_df['unit_measure'] == 'nan'])
+
+        # Convert to str and replace 0 values with empty string
+        ing_df['quantity'] = ing_df['quantity'].astype('int').astype('str')
+        ing_df['quantity'] = ing_df['quantity'].replace('0', ' ')
+
+        # Replace nas in unite unit measure with empty string
+        ing_df['unit_measure'] = ing_df['unit_measure'].astype('str')
+        ing_df['unit_measure'] = ing_df['unit_measure'].replace('nan', ' ')
+
+        # Create ingredients list
+        shopping_list = ing_df.transpose().to_dict()
+
+        return shopping_list
