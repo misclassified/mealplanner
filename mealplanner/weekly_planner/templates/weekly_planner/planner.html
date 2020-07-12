@@ -4,6 +4,8 @@
 
 {% block content %}
 
+<script src='{% static "weekly_planner/script.js" %}'> </script>
+
 <div class = "container-fluid">
   <div class="row justify-content-center">
     <div class='col-lg-6 text-center'>
@@ -85,26 +87,10 @@
       </div>
 
 
-<script>
-function shopList() {
-  var x = document.getElementById("shoppingList");
-
-  if (x.style.display === "block") {
-    x.style.display = "none";
-  } else {
-    x.style.display = "block";
-  }
-}
-</script>
-
 <br>
 <br>
-<button class="btn btn-primary hidden-print" onclick="myFunction()"><span class="glyphicon glyphicon-print" aria-hidden="true"></span> Print</button>
 
-<script> function myFunction() {
-    window.print();
-}
-</script>
+<button class="btn btn-primary hidden-print" onclick="windowPrint()"><span class="glyphicon glyphicon-print" aria-hidden="true"></span> Print</button>
 
 <br>
 <br>

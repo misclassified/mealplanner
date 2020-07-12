@@ -22,4 +22,11 @@ urlpatterns = [
     path('', views.home, name = 'home'),
     path('weekly_planner/', views.planner, name = 'planner'),
     path('test', views.test, name = 'test'),
+
+    # Authentication
+    path('signup', views.signupuser, name = 'signupuser'),
+    path('login/', views.loginuser, name='loginuser'),
+    path('logout/', views.logoutuser, name='logoutuser'),
+
+
 ]
